@@ -24,6 +24,9 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import { Constants } from 'react-native-unimodules';
+console.log(Constants.systemFonts);
+
 const App: () => React$Node = () => {
   return (
     <>

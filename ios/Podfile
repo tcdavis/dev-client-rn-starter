@@ -7,6 +7,8 @@ platform :ios, '10.0'
 target 'dc0925' do
   use_unimodules!
   config = use_native_modules!
+  pod 'EXDevMenuInterface', path: '../node_modules/expo-dev-menu-interface'
+  pod 'EXDevMenu', path: '../node_modules/expo-dev-menu', :configurations => :debug
 
   use_react_native!(:path => config["reactNativePath"])
 

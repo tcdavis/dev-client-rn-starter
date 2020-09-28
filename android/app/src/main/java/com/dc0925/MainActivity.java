@@ -1,8 +1,9 @@
 package com.dc0925;
 
-import com.facebook.react.ReactActivity;
+//import com.facebook.react.ReactActivity;
+import expo.modules.devmenu.react.DevMenuAwareReactActivity;
 
-public class MainActivity extends ReactActivity {
+public class MainActivity extends DevMenuAwareReactActivity {
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule

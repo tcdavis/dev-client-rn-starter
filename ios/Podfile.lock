@@ -6,6 +6,11 @@ PODS:
   - EXConstants (9.2.0):
     - UMConstantsInterface
     - UMCore
+  - EXDevMenu (0.0.2):
+    - EXDevMenuInterface
+    - React
+  - EXDevMenuInterface (0.0.2):
+    - React
   - EXFileSystem (9.2.0):
     - UMCore
     - UMFileSystemInterface
@@ -333,6 +338,8 @@ PODS:
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXDevMenu (from `../node_modules/expo-dev-menu`)
+  - EXDevMenuInterface (from `../node_modules/expo-dev-menu-interface`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
@@ -416,6 +423,10 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXDevMenu:
+    :path: "../node_modules/expo-dev-menu"
+  EXDevMenuInterface:
+    :path: "../node_modules/expo-dev-menu-interface"
   EXFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   EXImageLoader:
@@ -504,10 +515,12 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
   DoubleConversion: cde416483dac037923206447da6e1454df403714
-  EXConstants: 6ec1ea4a13ec734c7e2274bc9e5b7408d73007a1
-  EXFileSystem: efd6c0225f90c8b2c85131d578a09e13197e8b70
-  EXImageLoader: 0b33400e65955c5510a09afc2f9bb369a81e1c6e
-  EXPermissions: 5797c6c72efb411b2bbf502cd5acd841e3ffeefa
+  EXConstants: f486f6b4a36b86e47ab258d4d2b7b2699786fdce
+  EXDevMenu: 088b7b4d4205a648878ea530ae60150cc3170d52
+  EXDevMenuInterface: d0345b75a3e382389087e82121e2692b038f3255
+  EXFileSystem: afe9b1fd937d30270bf5108ba44e2f4a1d1ad694
+  EXImageLoader: 7153fb1307ac643299a9072b71da0d276f4c7789
+  EXPermissions: 30cbe5b72bd209b65c00884180ad058a60bb413d
   FBLazyVector: 3ef4a7f62e7db01092f9d517d2ebc0d0677c4a37
   FBReactNativeSpec: dc7fa9088f0f2a998503a352b0554d69a4391c5a
   Flipper: 33585e2d9810fe5528346be33bcf71b37bb7ae13
@@ -540,22 +553,22 @@ SPEC CHECKSUMS:
   React-RCTText: 1b6773e776e4b33f90468c20fe3b16ca3e224bb8
   React-RCTVibration: 4d2e726957f4087449739b595f107c0d4b6c2d2d
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
-  UMAppLoader: 939854a42e69527ee11dd17b39ebafcbfbefd05c
-  UMBarCodeScannerInterface: 198ced513a0cf8143d822620f1620bce467d02be
-  UMCameraInterface: dbcaade8d0364ba5518ae4519c63c59bf010aa89
-  UMConstantsInterface: 2ad180a29afdf28607d11d6e23c90793d294ea0e
-  UMCore: db635e8fcaf743f418484e9f9b9245bb2495f07a
-  UMFaceDetectorInterface: 24faf81d90fb00d477c674fd00b9cb005176f4a0
-  UMFileSystemInterface: 5216dca58177014de7f1157d69c70a1ec5c620bb
-  UMFontInterface: 4d0f13001fc59436125d7424cdfa7c897b699724
-  UMImageLoaderInterface: 575357942cc57ad31662659df9d5a73daa6de54c
-  UMPermissionsInterface: 208b2c5fd6756dcad739d806dfe32b9e44b9311b
-  UMReactNativeAdapter: 2c175f151cfe5ff011ced7bc79ccb08bf124f6c3
-  UMSensorsInterface: 1df848f22690ccd23a821777f00df230fe5a28e3
-  UMTaskManagerInterface: dfc62edf51844ae87dafc1fe849b594871fda1e5
+  UMAppLoader: 5db5dc03176c6238da9c8b3657a370137882a4ad
+  UMBarCodeScannerInterface: 017672479f93de88d94c3a50dfb66b5348b65989
+  UMCameraInterface: 22bd2c4bf15dcf68530368fa5704af7490818457
+  UMConstantsInterface: ff612789417aace6fd01a9c35616bc87dcdc8d97
+  UMCore: 28d7a74260813f906738533ad7dce4529d3d24ee
+  UMFaceDetectorInterface: 9bc6a197ad9d4d16ba13bfdf2340dd7f24964308
+  UMFileSystemInterface: e7795274eee76beaadaf6015bcc7f5da3054b925
+  UMFontInterface: bc5dd878b2f6fffdac80e41fd36893c619683712
+  UMImageLoaderInterface: 78ab0fd45c2bcaee61957fa23858bf31f2bcb122
+  UMPermissionsInterface: 4f21b0c2aaf953cf041109ff44231b2a69e22836
+  UMReactNativeAdapter: 61ae88818058b7849bbf5b79bf97872cb3c8e0eb
+  UMSensorsInterface: 49bea41dcfcc041f0bbab27cfe4a6006f1dde0c0
+  UMTaskManagerInterface: 6cad5929dbc0a5b986ad4d77caac497d4de730a7
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c372f85176c86f6fc834523bac218f531baf07ca
+PODFILE CHECKSUM: ca2d9c21c28916cdd026f011717bc6dca1342279
 
 COCOAPODS: 1.9.3

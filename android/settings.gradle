@@ -1,4 +1,9 @@
 rootProject.name = 'dc0925'
 apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects()
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include(":expo-dev-menu")
+project(":expo-dev-menu").projectDir = new File("../node_modules/expo-dev-menu/android")
+
+include(":expo-dev-menu-interface")
+project(":expo-dev-menu-interface").projectDir = new File("../node_modules/expo-dev-menu-interface/android")
 include ':app'

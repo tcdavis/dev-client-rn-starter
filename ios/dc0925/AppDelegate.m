@@ -32,9 +32,12 @@ static void InitializeFlipper(UIApplication *application) {
 }
 #endif
 
+
+
 @interface AppDelegate () <RCTBridgeDelegate>
  
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
+@property (nonatomic, strong) NSDictionary *launchOptions;
  
 @end
  
@@ -46,26 +49,39 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
-
+  self.launchOptions = launchOptions;
   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
- 
+  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+#ifdef DEBUG
+  EXDevelopmentClientController *controller = [EXDevelopmentClientController sharedInstance];
+  [controller startWithWindow:self.window delegate:self launchOptions:launchOptions];
+#else
+  [self initializeReactNativeBridge];
+#endif
+
+
+  return YES;
+}
+
+- (RCTBridge*)initializeReactNativeBridge
+{
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:self.launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"dc0925"
-                                            initialProperties:nil];
+    moduleName:@"dc0925"
+    initialProperties:nil];
+
   #if __has_include(<EXDevMenu/EXDevMenu-umbrella.h>)
   [DevMenuManager configureWithBridge:bridge];
   #endif
 
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  return YES;
+  return bridge;
 }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
@@ -78,10 +94,21 @@ static void InitializeFlipper(UIApplication *application) {
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  return [[EXDevelopmentClientController sharedInstance] sourceUrl]; 
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
 }
+
+- (void)developmentClientController:(EXDevelopmentClientController *)developmentClientController
+                didStartWithSuccess:(BOOL)success
+{
+  developmentClientController.appBridge = [self initializeReactNativeBridge];
+}
+
+- (id)appBridgeForDevMenuManager:(DevMenuManager *)manager {
+  return EXDevelopmentClientController.sharedInstance.appBridge;
+}
+
 
 @end

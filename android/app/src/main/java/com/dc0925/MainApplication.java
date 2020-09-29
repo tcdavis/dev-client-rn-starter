@@ -17,6 +17,7 @@ import java.util.Arrays;
 import org.unimodules.adapters.react.ModuleRegistryAdapter;
 import org.unimodules.adapters.react.ReactModuleRegistryProvider;
 import org.unimodules.core.interfaces.SingletonModule;
+import expo.modules.developmentclient.DevelopmentClientController;
 
 public class MainApplication extends Application implements ReactApplication {
   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
@@ -47,6 +48,12 @@ public class MainApplication extends Application implements ReactApplication {
         protected String getJSMainModuleName() {
           return "index";
         }
+
+
+        @Override
+        protected String getJSBundleFile() {
+          return DevelopmentClientController.getInstance().getJSBundleFile();
+        }
       };
 
   @Override
@@ -58,6 +65,7 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+    DevelopmentClientController.initialize(this, "dc0925");
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
 

@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "expo": "^39.0.3",
     "expo-barcode-scanner": "^9.0.0",
     "expo-dev-menu": "0.0.2",
     "expo-development-client": "^0.0.4",

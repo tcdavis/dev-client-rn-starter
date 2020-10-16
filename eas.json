@@ -7,7 +7,6 @@
       "dev-client" : {
         "workflow": "generic",
         "gradleCommand": ":app:assembleDebug",
-        "withoutCredentials": true
       }
     },
     "ios": {

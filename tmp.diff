@@ -1,0 +1,181 @@
+diff --git a/ios/Podfile.lock b/ios/Podfile.lock
+index 5185043..40c1e78 100644
+--- a/ios/Podfile.lock
++++ b/ios/Podfile.lock
+@@ -21,6 +21,9 @@ PODS:
+   - EXPermissions (9.3.0):
+     - UMCore
+     - UMPermissionsInterface
++  - expo-development-client (0.0.2):
++    - EXDevMenuInterface
++    - React
+   - FBLazyVector (0.63.2)
+   - FBReactNativeSpec (0.63.2):
+     - Folly (= 2020.01.13.00)
+@@ -343,6 +346,7 @@ DEPENDENCIES:
+   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
+   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
+   - EXPermissions (from `../node_modules/expo-permissions/ios`)
++  - expo-development-client (from `../node_modules/expo-development-client`)
+   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
+   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
+   - Flipper (~> 0.41.1)
+@@ -433,6 +437,8 @@ EXTERNAL SOURCES:
+     :path: "../node_modules/expo-image-loader/ios"
+   EXPermissions:
+     :path: "../node_modules/expo-permissions/ios"
++  expo-development-client:
++    :path: "../node_modules/expo-development-client"
+   FBLazyVector:
+     :path: "../node_modules/react-native/Libraries/FBLazyVector"
+   FBReactNativeSpec:
+@@ -521,6 +527,7 @@ SPEC CHECKSUMS:
+   EXFileSystem: afe9b1fd937d30270bf5108ba44e2f4a1d1ad694
+   EXImageLoader: 7153fb1307ac643299a9072b71da0d276f4c7789
+   EXPermissions: 30cbe5b72bd209b65c00884180ad058a60bb413d
++  expo-development-client: 7247123b23f86ee48b348be26c38dc7759249266
+   FBLazyVector: 3ef4a7f62e7db01092f9d517d2ebc0d0677c4a37
+   FBReactNativeSpec: dc7fa9088f0f2a998503a352b0554d69a4391c5a
+   Flipper: 33585e2d9810fe5528346be33bcf71b37bb7ae13
+diff --git a/ios/dc0925/AppDelegate.h b/ios/dc0925/AppDelegate.h
+index ef1de86..8b181b9 100644
+--- a/ios/dc0925/AppDelegate.h
++++ b/ios/dc0925/AppDelegate.h
+@@ -1,7 +1,8 @@
+ #import <React/RCTBridgeDelegate.h>
+ #import <UIKit/UIKit.h>
++#import <EXDevelopmentClientController.h>
+ 
+-@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
++@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, EXDevelopmentClientControllerDelegate>
+ 
+ @property (nonatomic, strong) UIWindow *window;
+ 
+diff --git a/ios/dc0925/AppDelegate.m b/ios/dc0925/AppDelegate.m
+index bc618b0..7efba8b 100644
+--- a/ios/dc0925/AppDelegate.m
++++ b/ios/dc0925/AppDelegate.m
+@@ -32,9 +32,12 @@ static void InitializeFlipper(UIApplication *application) {
+ }
+ #endif
+ 
++
++
+ @interface AppDelegate () <RCTBridgeDelegate>
+  
+ @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
++@property (nonatomic, strong) NSDictionary *launchOptions;
+  
+ @end
+  
+@@ -46,26 +49,42 @@ static void InitializeFlipper(UIApplication *application) {
+ #ifdef FB_SONARKIT_ENABLED
+   InitializeFlipper(application);
+ #endif
+-
++  self.launchOptions = launchOptions;
+   self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
+  
++#ifdef DEBUG
++  EXDevelopmentClientController *controller = [EXDevelopmentClientController sharedInstance];
++  [controller startWithWindow:self.window delegate:self launchOptions:launchOptions];
++#else
++  [self initializeReactNativeBridge];
++#endif
++
+ 
+-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
++  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
++                                      
++
++
++  return YES;
++}
++
++- (RCTBridge*)initializeReactNativeBridge
++{
++  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:self.launchOptions];
+   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+-                                                   moduleName:@"dc0925"
+-                                            initialProperties:nil];
++    moduleName:@"dc0925"
++    initialProperties:nil];
++
+   #if __has_include(<EXDevMenu/EXDevMenu-umbrella.h>)
+   [DevMenuManager configureWithBridge:bridge];
+   #endif
+ 
+   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+ 
+-  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+   UIViewController *rootViewController = [UIViewController new];
+   rootViewController.view = rootView;
+   self.window.rootViewController = rootViewController;
+   [self.window makeKeyAndVisible];
+-  return YES;
++  return bridge;
+ }
+ 
+ - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
+@@ -78,10 +97,20 @@ static void InitializeFlipper(UIApplication *application) {
+ - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+ {
+ #if DEBUG
+-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
++  return [[EXDevelopmentClientController sharedInstance] sourceUrl]; 
+ #else
+   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+ #endif
+ }
+ 
++- (void)developmentClientController:(EXDevelopmentClientController *)developmentClientController
++                didStartWithSuccess:(BOOL)success
++{
++  developmentClientController.appBridge = [self initializeReactNativeBridge];
++}
++
++- (id)appBridgeForDevMenuManager:(DevMenuManager *)manager {
++  return EXDevelopmentClientController.sharedInstance.appBridge;
++}
++
+ @end
+diff --git a/ios/dc0925/Info.plist b/ios/dc0925/Info.plist
+index 460c121..50aae71 100644
+--- a/ios/dc0925/Info.plist
++++ b/ios/dc0925/Info.plist
+@@ -53,5 +53,7 @@
+ 	</array>
+ 	<key>UIViewControllerBasedStatusBarAppearance</key>
+ 	<false/>
++	<key>NSCameraUsageDescription</key>
++	<string>Allow dev-client-test to use the camera</string>
+ </dict>
+ </plist>
+diff --git a/package.json b/package.json
+index 7a7fea6..33971b6 100644
+--- a/package.json
++++ b/package.json
+@@ -11,6 +11,7 @@
+   },
+   "dependencies": {
+     "expo-dev-menu": "0.0.2",
++    "expo-development-client": "0.0.2",
+     "react": "16.13.1",
+     "react-native": "0.63.2",
+     "react-native-unimodules": "^0.11.0"
+diff --git a/yarn.lock b/yarn.lock
+index 5668e41..f03ba49 100644
+--- a/yarn.lock
++++ b/yarn.lock
+@@ -2866,6 +2866,11 @@ expo-dev-menu@0.0.2:
+   dependencies:
+     expo-dev-menu-interface "0.0.2"
+ 
++expo-development-client@0.0.2:
++  version "0.0.2"
++  resolved "https://registry.yarnpkg.com/expo-development-client/-/expo-development-client-0.0.2.tgz#d7574b8b49f0a95f60460fca8b37057caac5c4c9"
++  integrity sha512-CyQurLpIK+qb2Oh+UALVXZKHd0ATTPoaxwoQT/s8IhgbJ01INm1saYNkEf9RFIcPg6xWtaQJRUmD+iI588vQdg==
++
+ expo-file-system@~9.2.0:
+   version "9.2.0"
+   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-9.2.0.tgz#e8efde36968a1e6d826236044a970e85bfe0aeee"

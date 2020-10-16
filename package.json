@@ -13,7 +13,7 @@
     "expo": "^39.0.3",
     "expo-barcode-scanner": "^9.0.0",
     "expo-dev-menu": "0.0.2",
-    "expo-development-client": "^0.0.4",
+    "expo-development-client": "^0.0.5",
     "react": "16.13.1",
     "react-native": "0.63.2",
     "react-native-unimodules": "^0.11.0"

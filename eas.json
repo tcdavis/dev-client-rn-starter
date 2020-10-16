@@ -6,7 +6,7 @@
       },
       "dev-client" : {
         "workflow": "generic",
-        "gradleCommand": ":app:assembleDebug",
+        "gradleCommand": ":app:assembleDebug"
       }
     },
     "ios": {
